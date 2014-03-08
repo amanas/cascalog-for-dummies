@@ -21,11 +21,13 @@
           ([[2 3]] ?b ?c)) =>
       (produces [[1 3]]))
 
+;Next examples are inspired, when not copied, from
+;http://jimdrannbauer.com/2011/02/04/cascalog-made-easier/
 (defmapfn my-name-is
           [name]
           ["my" "name" "is"])
 
-(fact "Expands - http://jimdrannbauer.com/2011/02/04/cascalog-made-easier/"
+(fact "Expands"
       (<- [?my ?name ?is ?my-name]
           ([["Jim"]
             ["Kerry"]] ?my-name)
@@ -33,32 +35,58 @@
       (produces [["my" "name" "is" "Jim"]
                  ["my" "name" "is" "Kerry"]]))
 
-(defmapcatfn explode
+(defmapcatfn explode-single
              [bs]
              (map vector bs))
 
-(fact "Explodes - http://jimdrannbauer.com/2011/02/04/cascalog-made-easier/"
+(fact "Explodes - single column"
       (<- [?a ?b]
           ([["this" ["should" "be" "vertical"]]] ?a ?bs)
-          (explode ?bs :> ?b)) =>
+          (explode-single ?bs :> ?b)) =>
       (produces [["this" "should"]
                  ["this" "be"]
                  ["this" "vertical"]]))
 
-(defaggregatefn implode
+(defmapcatfn explode-multi
+             [a b c d]
+             [[a] [b] [c] [d]])
+
+(fact "Explodes - multi column"
+      (<- [?e]
+          ([["this" "should" "be" "vertical"]] ?a ?b ?c ?d)
+          (explode-multi ?a ?b ?c ?d :> ?e)) =>
+      (produces [["this"]
+                 ["should"]
+                 ["be"]
+                 ["vertical"]]))
+
+(defaggregatefn implode-single
                 ([] [])
                 ([word-list] [[word-list]])
                 ([word-list word] (conj word-list word)))
 
-(fact "Implodes - http://jimdrannbauer.com/2011/02/04/cascalog-made-easier/"
+(fact "Implodes - single column"
       (<- [?a ?c]
           ([["this" "should"]
             ["this" "be"]
             ["this" "horizontal"]] ?a ?b)
-          (implode ?b :> ?c)) =>
+          (implode-single ?b :> ?c)) =>
       (produces [["this" ["should" "be" "horizontal"]]]))
 
 
+(defaggregatefn implode-single
+                ([] [])
+                ([word-list] [word-list])
+                ([word-list word] (conj word-list word)))
+
+(fact "Implodes - multi column"
+      (<- [?a ?b ?c ?d]
+          ([["this"]
+            ["should"]
+            ["be"]
+            ["horizontal"]] ?w)
+          (implode-single ?w :> ?a ?b ?c ?d)) =>
+      (produces [["this" "should" "be" "horizontal"]]))
 
 
 
