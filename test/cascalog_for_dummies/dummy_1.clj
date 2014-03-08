@@ -50,7 +50,7 @@
                 ([word-list] [[word-list]])
                 ([word-list word] (conj word-list word)))
 
-(fact "Explodes - http://jimdrannbauer.com/2011/02/04/cascalog-made-easier/"
+(fact "Implodes - http://jimdrannbauer.com/2011/02/04/cascalog-made-easier/"
       (<- [?a ?c]
           ([["this" "should"]
             ["this" "be"]
