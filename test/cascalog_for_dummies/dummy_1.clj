@@ -74,7 +74,7 @@
       (produces [["this" ["should" "be" "horizontal"]]]))
 
 
-(defaggregatefn implode-single
+(defaggregatefn implode-multi
                 ([] [])
                 ([word-list] [word-list])
                 ([word-list word] (conj word-list word)))
@@ -85,7 +85,7 @@
             ["should"]
             ["be"]
             ["horizontal"]] ?w)
-          (implode-single ?w :> ?a ?b ?c ?d)) =>
+          (implode-multi ?w :> ?a ?b ?c ?d)) =>
       (produces [["this" "should" "be" "horizontal"]]))
 
 
