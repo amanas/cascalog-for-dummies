@@ -88,8 +88,32 @@
           (implode-multi ?w :> ?a ?b ?c ?d)) =>
       (produces [["this" "should" "be" "horizontal"]]))
 
+(defbufferfn buffer-sinple
+             [tuples]
+             [(apply + (map first tuples))])
 
+(fact "Buffer function"
+      (<- [?a ?c]
+          ([[2 2]
+            [2 3]
+            [3 7]] ?a ?b)
+          (buffer-sinple ?b :> ?c)) =>
+      (produces [[2 5]
+                 [3 7]]))
 
+(defn buffer-parametrized
+  [param]
+  (bufferfn [tuples]
+            [(* param (apply + (map first tuples)))]))
+
+(fact "Parametrized buffer function"
+      (<- [?a ?c]
+          ([[2 2]
+            [2 3]
+            [3 7]] ?a ?b)
+          ((buffer-parametrized 2) ?b :> ?c)) =>
+      (produces [[2 10]
+                 [3 14]]))
 
 
 
